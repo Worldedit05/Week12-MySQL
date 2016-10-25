@@ -1,0 +1,26 @@
+{
+  "name": "bamazon-mysql",
+  "version": "1.0.0",
+  "description": "An 'amazon' like node application that simulates various functions to perform on a SQL database.",
+  "main": "BamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Worldedit05/Week12-MySQL.git"
+  },
+  "keywords": [
+    "Bamazon",
+    "MySQL"
+  ],
+  "author": "Aaron Lee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Worldedit05/Week12-MySQL/issues"
+  },
+  "homepage": "https://github.com/Worldedit05/Week12-MySQL#readme",
+  "dependencies": {
+    "inquirer": "^1.2.2"
+  }
+}
