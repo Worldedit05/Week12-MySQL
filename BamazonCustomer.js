@@ -13,6 +13,7 @@ connection.connect(function(err) {
     if (err) throw err;
     console.log("Sucessful connection");
     showProducts();
+    console.log("---------------------------------------------");
     setTimeout(runCheckOut, 1000);
 });
 
@@ -38,6 +39,7 @@ var runCheckOut = function() {
             }], function(err, res) {
                 console.log(res + "\nStock has been deducted to " + updateStock);
                 showProducts();
+                console.log("---------------------------------------------");
                 setTimeout(runCheckOut, 1000);
             });
         });
