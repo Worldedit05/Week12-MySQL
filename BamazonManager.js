@@ -44,16 +44,16 @@ var managerPrompt = function() {
 // Just in case we need to prompt the user to return to the main menu
 var nextPrompt = function() {
     inquirer.prompt({
-      name: "return",
-      type: "list",
-      message: "Return to the main menu?",
-      choices: ["Yes", "No"]
+        name: "return",
+        type: "list",
+        message: "Return to the main menu?",
+        choices: ["Yes", "No"]
     }).then(function(answer) {
-      if (answer.return === "Yes") {
-        managerPrompt();
-      }else {
-        return;
-      }
+        if (answer.return === "Yes") {
+            managerPrompt();
+        } else {
+            return;
+        }
     });
 };
 // Simple function to query and display all products in the table
@@ -64,6 +64,7 @@ var viewProducts = function(value, callback) {
         res.forEach(function(item, index) {
             console.log(item.ItemID + ' || ' + item.ProductName + ' || ' + item.DepartmentName + ' || ' + item.Price + ' || ' + item.StockQuantity);
         });
+        console.log("---------------------------------------------");
         if (value) {
             callback();
         }
@@ -77,6 +78,7 @@ var lowInventory = function() {
         res.forEach(function(item, index) {
             console.log(item.ItemID + ' || ' + item.ProductName + ' || ' + item.DepartmentName + ' || ' + item.Price + ' || ' + item.StockQuantity);
         });
+        console.log("---------------------------------------------");
         managerPrompt();
     });
 };
@@ -96,7 +98,7 @@ var addInventory = function() {
             }
             done(null, true);
         }
-      }, {
+    }, {
         name: "updateQty",
         type: "input",
         message: "How many?",
@@ -120,8 +122,9 @@ var addInventory = function() {
             }, {
                 ItemID: answer.itemSelection
             }], function(err, res) {
-              console.log("Inventory changed sucessfully - " + res.message);
-              managerPrompt();
+                console.log("Inventory changed sucessfully - " + res.message);
+                console.log("---------------------------------------------");
+                managerPrompt();
             });
 
         });
@@ -146,22 +149,23 @@ var addProduct = function() {
         name: "stock",
         type: "input",
         message: "What is the initial stock?"
-      }]).then(function(answer) {
+    }]).then(function(answer) {
         inquirer.prompt({
-          name: "confirm",
-          type: "list",
-          message: "Please check the product details and verify that the information is correct!\n" + answer.product_name + " " + answer.department_name + " " + answer.price + " " + answer.stock,
-          choices: ["Yes", "No"]
+            name: "confirm",
+            type: "list",
+            message: "Please check the product details and verify that the information is correct!\n" + answer.product_name + " " + answer.department_name + " " + answer.price + " " + answer.stock,
+            choices: ["Yes", "No"]
         }).then(function(input) {
-          if (input.confirm === "Yes"){
-            var query = 'INSERT INTO products (ProductName, DepartmentName, Price, StockQuantity) VALUES ( "'+ answer.product_name +'", "'+  answer.department_name +'" , "'+ answer.price +'" , "'+ answer.stock +'");';
-            connection.query(query, {}, function(err, res) {
-                console.log(res);
+            if (input.confirm === "Yes") {
+                var query = 'INSERT INTO products (ProductName, DepartmentName, Price, StockQuantity) VALUES ( "' + answer.product_name + '", "' + answer.department_name + '" , "' + answer.price + '" , "' + answer.stock + '");';
+                connection.query(query, {}, function(err, res) {
+                    console.log(res);
+                    console.log("---------------------------------------------");
+                    managerPrompt();
+                });
+            } else {
                 managerPrompt();
-            });
-          }else{
-            managerPrompt();
-          }
+            }
         });
     });
 };
