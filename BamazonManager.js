@@ -33,12 +33,15 @@ var managerPrompt = function() {
                 addInventory();
                 break;
             case 'Add New Product':
-
+                addProduct();
+                break;
+            default:
+                viewProducts(true, managerPrompt);
                 break;
         }
     });
 };
-
+// Just in case we need to prompt the user to return to the main menu
 var nextPrompt = function() {
     inquirer.prompt({
       name: "return",
@@ -53,7 +56,7 @@ var nextPrompt = function() {
       }
     });
 };
-
+// Simple function to query and display all products in the table
 var viewProducts = function(value, callback) {
     console.log('\nHere is the catalog: \n\nProductID || Product Name || Deparment || Price || Stock\n');
     var query = 'SELECT * FROM products';
@@ -66,7 +69,7 @@ var viewProducts = function(value, callback) {
         }
     });
 };
-
+// Query that filters based on low inventory
 var lowInventory = function() {
     console.log('\nProducts with low stock ( < 5): \n\nProductID || Product Name || Deparment || Price || Stock\n');
     var query = 'SELECT * FROM products WHERE StockQuantity <= 5';
@@ -76,6 +79,7 @@ var lowInventory = function() {
         });
     });
 };
+// Shows the product table and prompts the user to provide an ItemID and quantity to add to StockQuantity
 
 var addInventory = function() {
     inquirer.prompt({
@@ -111,6 +115,48 @@ var addInventory = function() {
             ItemID: answer.itemSelection
         }], function(err, res) {
             console.log(res);
+        });
+    });
+};
+
+// Function that will allow the user to add a new item to the product table
+var addProduct = function() {
+    inquirer.prompt([{
+        name: "product_name",
+        type: "input",
+        message: "What is the product name?"
+    }, {
+        name: "department_name",
+        type: "input",
+        message: "What product department does this item belong to?"
+    }, {
+        name: "price",
+        type: "input",
+        message: "What is the products price?"
+    }, {
+        name: "stock",
+        type: "input",
+        message: "What is the initial stock?"
+      }]).then(function(answer) {
+        inquirer.prompt({
+          name: "confirm",
+          type: "list",
+          message: "Please check the product details and verify that the information is correct!\n" + answer.product_name,
+          choices: ["Yes", "No"]
+        }).then(function(input) {
+          if (input.confirm === "Yes"){
+            console.log(answer.product_name);
+            // var query = 'UPDATE product SET ? WHERE ?';
+            // connection.query(query, [{
+            //     StockQuantity: StockQuantity + answer.updateQty
+            // }, {
+            //     ItemID: answer.itemSelection
+            // }], function(err, res) {
+            //     console.log(res);
+            // });
+          }else{
+            managerPrompt();
+          }
         });
     });
 };
