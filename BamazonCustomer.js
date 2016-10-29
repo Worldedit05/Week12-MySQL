@@ -42,12 +42,18 @@ var runCheckOut = function() {
                 console.log("---------------------------------------------");
                 setTimeout(runCheckOut, 1000);
             });
-            connection.query("UPDATE departments SET ? WHERE ?", [{
-                TotalSales: TotalSales + (res[0].Price * answer.quantity)
-            }, {
+            // Working on this to try and add price to the current value in the table
+            connection.query("SELECT TotalSales FROM departments WHERE ?", {
                 DepartmentName: res[0].DepartmentName
-            }], function(err, res) {
-                console.log("Total Sales updated!");
+            }, function(err, res) {
+              console.log(res);
+              // connection.query("UPDATE departments SET ? WHERE ?", [{
+              //     TotalSales: res[0].TotalSales + (res[0].Price * answer.quantity)
+              // }, {
+              //     DepartmentName: res[0].DepartmentName
+              // }], function(err, res) {
+              //     console.log("Total Sales updated!");
+              // });
             });
         });
 
