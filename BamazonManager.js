@@ -77,44 +77,53 @@ var lowInventory = function() {
         res.forEach(function(item, index) {
             console.log(item.ItemID + ' || ' + item.ProductName + ' || ' + item.DepartmentName + ' || ' + item.Price + ' || ' + item.StockQuantity);
         });
+        managerPrompt();
     });
 };
 // Shows the product table and prompts the user to provide an ItemID and quantity to add to StockQuantity
 
 var addInventory = function() {
-    inquirer.prompt({
+    inquirer.prompt([{
         name: "itemSelection",
         type: "input",
         message: "Which itemID would you like to add inventory to?",
-        choices: function() {
-            viewProducts(false);
-        },
         validate: function(input) {
             // console.log(isNaN(input));
+            var done = this.async();
             if (isNaN(input)) {
-                console.log('Please provide a valid number!');
+                console.log('\nPlease provide a valid number!');
                 return;
             }
+            done(null, true);
         }
-    }, {
+      }, {
         name: "updateQty",
         type: "input",
         message: "How many?",
         validate: function(input) {
+            // console.log(isNaN(input));
+            var done = this.async();
             if (isNaN(input)) {
-                done('Please provide a valid quantity!');
+                console.log('\nPlease provide a valid number!');
                 return;
             }
+            done(null, true);
         }
-    }).then(function(answer) {
-        var updateStock;
-        var query = 'UPDATE product SET ? WHERE ?';
-        connection.query(query, [{
-            StockQuantity: StockQuantity + answer.updateQty
-        }, {
+    }]).then(function(answer) {
+        var query = 'SELECT StockQuantity FROM products WHERE ?';
+        connection.query(query, {
             ItemID: answer.itemSelection
-        }], function(err, res) {
-            console.log(res);
+        }, function(err, res) {
+            var query = 'UPDATE products SET ? WHERE ?';
+            connection.query(query, [{
+                StockQuantity: res[0].StockQuantity + parseInt(answer.updateQty)
+            }, {
+                ItemID: answer.itemSelection
+            }], function(err, res) {
+              console.log("Inventory changed sucessfully - " + res.message);
+              managerPrompt();
+            });
+
         });
     });
 };
@@ -141,19 +150,15 @@ var addProduct = function() {
         inquirer.prompt({
           name: "confirm",
           type: "list",
-          message: "Please check the product details and verify that the information is correct!\n" + answer.product_name,
+          message: "Please check the product details and verify that the information is correct!\n" + answer.product_name + " " + answer.department_name + " " + answer.price + " " + answer.stock,
           choices: ["Yes", "No"]
         }).then(function(input) {
           if (input.confirm === "Yes"){
-            console.log(answer.product_name);
-            // var query = 'UPDATE product SET ? WHERE ?';
-            // connection.query(query, [{
-            //     StockQuantity: StockQuantity + answer.updateQty
-            // }, {
-            //     ItemID: answer.itemSelection
-            // }], function(err, res) {
-            //     console.log(res);
-            // });
+            var query = 'INSERT INTO products (ProductName, DepartmentName, Price, StockQuantity) VALUES ( "'+ answer.product_name +'", "'+  answer.department_name +'" , "'+ answer.price +'" , "'+ answer.stock +'");';
+            connection.query(query, {}, function(err, res) {
+                console.log(res);
+                managerPrompt();
+            });
           }else{
             managerPrompt();
           }
